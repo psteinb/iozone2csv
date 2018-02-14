@@ -10,4 +10,11 @@ I assume that you have launched iozone for example in the following manner:
 $ iozone -a -n 1g -g 2g -y 512k -q 4m  -f /tmp/testme
 ```
 
-Which produces outputs like [iozone.out](iozone.out)
+Which produces outputs like [iozone.out](iozone.out) to your terminal. To capture this to a file (e.g. `iozone.out`, do the following:
+
+``` bash
+$ iozone -a -n 1g -g 2g -y 512k -q 4m  -f /tmp/testme > iozone.out
+```
+
+## using the converter
+
