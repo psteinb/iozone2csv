@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import re
+import argparse
+import os
 
 class iozone_extract:
     """ extract valuable parts of the iozone output """
@@ -86,3 +88,57 @@ class iozone_extract:
         value = [ item.split() for item in self.splitted[len(self.header)+1:] if len(re.findall(digits, item)) > nfields ]
 
         return value
+
+
+def main():
+
+    parser = argparse.ArgumentParser(description='convert iozone stdout (not the excel stuff to ')
+    parser.add_argument('files', type=str, nargs='+',
+                        help='output files produced by iozone')
+    parser.add_argument('-o','--output', type=str, default='iozone.csv',action='store',
+                        help='output files produced by iozone')
+    parser.add_argument('-s','--separator', type=str, default=',', action='store',
+                        help='separator for output file')
+    parser.add_argument('-V','--verbose', action='store_true', default=False,
+                        help='separator for output file')
+
+    args = parser.parse_args()
+
+    outputlines = []
+
+    hdr_written = False
+
+    for fname in args.files:
+        if not os.path.exists(fname):
+            print(fname, " does not exist. Skipping it!")
+            continue
+        ifile = open(fname,'r')
+        iozone_stdout = "".join([ item for item in ifile.readlines() ])
+        ioz_parsed = iozone_extract(iozone_stdout)
+        if args.verbose:
+            print(fname, " produced by iozone ", ioz_parsed.version())
+
+        if not hdr_written:
+            thdr = ioz_parsed.table_header()
+            thdr += "version,build,cachesize_kB,cachelinesize_kB,file_stride,id".split(',')
+#            thdr += '\n'
+
+            outputlines.append((args.separator).join(thdr))
+
+        tbl = ioz_parsed.experiments()
+        constant = [ ioz_parsed.version(), ioz_parsed.build(), ioz_parsed.assumed_cache()[0], ioz_parsed.assumed_cache()[-1], ioz_parsed.file_stride(), os.path.split(os.path.abspath(fname))[-1] ]
+
+        for row in tbl:
+            cline = [ str(item) for item in row ]
+            cline += [ str(item) for item in constant ]
+#            cline += '\n'
+
+
+            outputlines.append(str(args.separator).join(cline))
+
+    ofile = open(args.output,'w')
+    ofile.writelines("\n".join(outputlines))
+    ofile.close()
+
+if __name__ == '__main__':
+    main()
