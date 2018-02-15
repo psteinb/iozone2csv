@@ -18,3 +18,18 @@ $ iozone -a -n 1g -g 2g -y 512k -q 4m  -f /tmp/testme > iozone.out
 
 ## using the converter
 
+In it's simplest form, the following
+
+``` bash
+$ python3 ./iozone2csv.py iozone.out
+```
+
+will produce `iozone.csv` which contains the tabular fields from the iozone output as csv fields. The tool also supports multiple input files:
+
+``` bash
+$ python3 ./iozone2csv.py iozone1.out iozone2.out iozone3.out 
+```
+
+This will concatenate the tables into `iozone.csv` and assign each entry the respective file name as `id`.
+
+More feedback on the code is highly welcome!
