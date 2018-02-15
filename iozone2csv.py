@@ -124,6 +124,7 @@ def main():
 #            thdr += '\n'
 
             outputlines.append((args.separator).join(thdr))
+            hdr_written = True
 
         tbl = ioz_parsed.experiments()
         constant = [ ioz_parsed.version(), ioz_parsed.build(), ioz_parsed.assumed_cache()[0], ioz_parsed.assumed_cache()[-1], ioz_parsed.file_stride(), os.path.split(os.path.abspath(fname))[-1] ]
